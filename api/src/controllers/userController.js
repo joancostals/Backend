@@ -1,62 +1,59 @@
-const userService = require('../services/userService');
+const userService = require('../services/userService')
 
-// POST /api/users
+// POST - Crear usuari
 const createUsuario = async (req, res) => {
   try {
-    const usuario = await userService.createUsuario(req.body);
-    res.status(201).json({ status: 'success', data: usuario });
+    const user = await userService.createUsuario(req.body);
+    res.status(201).json({ status: 'success', data: user });
   } catch (error) {
     res.status(400).json({ status: 'error', message: error.message });
   }
 };
 
-// GET /api/users
-const getUsuarios = async (_req, res) => {
+// GET - Obtenir tots els usuaris
+const getUsuario = async (req, res) => {
   try {
-    const usuarios = await userService.getUsuarios();
-    res.status(200).json({ status: 'success', data: usuarios });
+    const users = await userService.getUsuarios();
+    res.status(200).json({ status: 'success', data: users });
   } catch (error) {
     res.status(500).json({ status: 'error', message: error.message });
   }
 };
 
-// GET /api/users/:id  (id_usuario)
+// GET/:id - Obtenir un usuari per ID
 const getUsuarioById = async (req, res) => {
   try {
-    const { id } = req.params;
-    const usuario = await userService.getUsuarioByIdUsuario(id);
-    if (!usuario) {
-      return res.status(404).json({ status: 'error', message: 'Usuario no encontrado' });
+    const user = await userService.getUsuarioById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ status: 'error', message: 'Usuari no trobat' });
     }
-    res.status(200).json({ status: 'success', data: usuario });
+    res.status(200).json({ status: 'success', data: user });
   } catch (error) {
     res.status(500).json({ status: 'error', message: error.message });
   }
 };
 
-// PUT /api/users/:id  (id_usuario)
+// PUT/:id - Actualitzar usuari
 const updateUsuario = async (req, res) => {
   try {
-    const { id } = req.params;
-    const usuarioActualizado = await userService.updateUsuario(id, req.body);
-    if (!usuarioActualizado) {
-      return res.status(404).json({ status: 'error', message: 'Usuario no encontrado' });
+    const user = await userService.updateUsuario(req.params.id, req.body);
+    if (!user) {
+      return res.status(404).json({ status: 'error', message: 'Usuari no trobat' });
     }
-    res.status(200).json({ status: 'success', data: usuarioActualizado });
+    res.status(200).json({ status: 'success', data: user });
   } catch (error) {
     res.status(400).json({ status: 'error', message: error.message });
   }
 };
 
-// DELETE /api/users/:id  (id_usuario)
+// DELETE/:id - Eliminar usuari
 const deleteUsuario = async (req, res) => {
   try {
-    const { id } = req.params;
-    const eliminado = await userService.deleteUsuario(id);
-    if (!eliminado) {
-      return res.status(404).json({ status: 'error', message: 'Usuario no encontrado' });
+    const user = await userService.deleteUsuario(req.params.id);
+    if (!user) {
+      return res.status(404).json({ status: 'error', message: 'Usuari no trobat' });
     }
-    res.status(200).json({ status: 'success', message: 'Usuario eliminado' });
+    res.status(200).json({ status: 'success', message: 'Usuari eliminat correctament' });
   } catch (error) {
     res.status(500).json({ status: 'error', message: error.message });
   }
@@ -64,7 +61,7 @@ const deleteUsuario = async (req, res) => {
 
 module.exports = {
   createUsuario,
-  getUsuarios,
+  getUsuario,
   getUsuarioById,
   updateUsuario,
   deleteUsuario,

@@ -1,0 +1,61 @@
+### ================================
+### Obtenir tots els usuaris
+GET http://localhost:5000/api/users HTTP/1.1
+Content-Type: application/json
+
+### ================================
+### Obtenir un usuari per ID (Maria)
+GET http://localhost:5000/api/users/68f5f6accb7cf445387aa124 HTTP/1.1
+Content-Type: application/json
+
+### ================================
+### Obtenir un usuari per ID (Joan Updated)
+GET http://localhost:5000/api/users/68f5f71ccb7cf445387aa12b HTTP/1.1
+Content-Type: application/json
+
+### ================================
+### Obtenir un usuari per ID (Joan)
+GET http://localhost:5000/api/users/68f5f929cb7cf445387aa156 HTTP/1.1
+Content-Type: application/json
+
+### ================================
+### Obtenir un usuari per ID (Alex)
+GET http://localhost:5000/api/users/68f5f932cb7cf445387aa15a HTTP/1.1
+Content-Type: application/json
+
+### ================================
+### Actualitzar usuari Joan Updated
+PUT http://localhost:5000/api/users/68f5f71ccb7cf445387aa12b HTTP/1.1
+Content-Type: application/json
+
+{
+  "nombre": "Joan Pérez Final",
+  "email": "joan_final@example.com",
+  "rol": "cliente",
+  "direccion": "Carrer de Mallorca 999, Barcelona",
+  "telefono": "600999888"
+}
+
+### ================================
+### Eliminar usuari Alex
+DELETE http://localhost:5000/api/users/68f5f932cb7cf445387aa15a HTTP/1.1
+Content-Type: application/json
+
+### ================================
+### Tornar a crear usuari Alex després d’eliminar-lo
+POST http://localhost:5000/api/users HTTP/1.1
+Content-Type: application/json
+
+{
+  "nombre": "Alex García",
+  "email": "alex@example.com",
+  "password": "alex789",
+  "rol": "cliente",
+  "direccion": "Avinguda Diagonal 200, Barcelona",
+  "telefono": "600987654"
+}
+
+### ================================
+### Obtenir tots els usuaris al final
+GET http://localhost:5000/api/users HTTP/1.1
+Content-Type: application/json
