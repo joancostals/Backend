@@ -1,60 +1,46 @@
-const Pedido = require('../models/pedidoModel');
+const pedidoService = require('../services/pedidoService');
 
-// Crear pedido
-exports.createPedido = async (req, res) => {
-  try {
-    const pedido = await Pedido.create(req.body);
-    res.status(201).json({ status: 'success', data: pedido });
-  } catch (error) {
-    res.status(400).json({ status: 'error', message: error.message });
-  }
+exports.getAllPedidos = async (req, res) => {
+    try {
+        const pedidos = await pedidoService.getAllPedidos();
+        res.json({ status: 'success', data: pedidos });
+    } catch (error) {
+        res.status(500).json({ status: 'error', message: error.message });
+    }
 };
 
-// Obtener todos los pedidos
-exports.getPedidos = async (req, res) => {
-  try {
-    const pedidos = await Pedido.find().populate('id_usuario');
-    res.status(200).json({ status: 'success', data: pedidos });
-  } catch (error) {
-    res.status(500).json({ status: 'error', message: error.message });
-  }
-};
-
-// Obtener pedido por ID
 exports.getPedidoById = async (req, res) => {
-  try {
-    const pedido = await Pedido.findById(req.params.id).populate('id_usuario');
-    if (!pedido) {
-      return res.status(404).json({ status: 'error', message: 'Pedido no encontrado' });
+    try {
+        const pedido = await pedidoService.getPedidoById(req.params.id);
+        res.json({ status: 'success', data: pedido });
+    } catch (error) {
+        res.status(500).json({ status: 'error', message: error.message });
     }
-    res.status(200).json({ status: 'success', data: pedido });
-  } catch (error) {
-    res.status(500).json({ status: 'error', message: error.message });
-  }
 };
 
-// Actualizar pedido
+exports.createPedido = async (req, res) => {
+    try {
+        const newPedido = await pedidoService.createPedido(req.body);
+        res.status(201).json({ status: 'success', data: newPedido });
+    } catch (error) {
+        res.status(500).json({ status: 'error', message: error.message });
+    }
+};
+
 exports.updatePedido = async (req, res) => {
-  try {
-    const pedido = await Pedido.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!pedido) {
-      return res.status(404).json({ status: 'error', message: 'Pedido no encontrado' });
+    try {
+        const updatedPedido = await pedidoService.updatePedido(req.params.id, req.body);
+        res.json({ status: 'success', data: updatedPedido });
+    } catch (error) {
+        res.status(500).json({ status: 'error', message: error.message });
     }
-    res.status(200).json({ status: 'success', data: pedido });
-  } catch (error) {
-    res.status(400).json({ status: 'error', message: error.message });
-  }
 };
 
-// Eliminar pedido
 exports.deletePedido = async (req, res) => {
-  try {
-    const pedido = await Pedido.findByIdAndDelete(req.params.id);
-    if (!pedido) {
-      return res.status(404).json({ status: 'error', message: 'Pedido no encontrado' });
+    try {
+        await pedidoService.deletePedido(req.params.id);
+        res.json({ status: 'success', message: 'Pedido eliminado' });
+    } catch (error) {
+        res.status(500).json({ status: 'error', message: error.message });
     }
-    res.status(200).json({ status: 'success', message: 'Pedido eliminado correctamente' });
-  } catch (error) {
-    res.status(500).json({ status: 'error', message: error.message });
-  }
 };

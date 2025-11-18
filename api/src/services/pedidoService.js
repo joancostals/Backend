@@ -1,39 +1,10 @@
-const Pedido = require('../models/Pedido');
+const Pedido = require('../models/pedidoModel');
 
-// Crear un nou pedido
-const createPedido = async (pedidoData) => {
-  const newPedido = new Pedido(pedidoData);
-  return await newPedido.save();
+exports.getAllPedidos = async () => await Pedido.find();
+exports.getPedidoById = async (id) => await Pedido.findById(id);
+exports.createPedido = async (data) => {
+    const pedido = new Pedido(data);
+    return await pedido.save();
 };
-
-// Obtenir tots els pedidos
-const getPedidos = async () => {
-  return await Pedido.find()
-    .populate('id_usuario')
-    .populate('id_pala');
-};
-
-// Obtenir un pedido per ID
-const getPedidoById = async (id) => {
-  return await Pedido.findById(id)
-    .populate('id_usuario')
-    .populate('id_pala');
-};
-
-// Actualitzar un pedido per ID
-const updatePedido = async (id, updateData) => {
-  return await Pedido.findByIdAndUpdate(id, updateData, { new: true });
-};
-
-// Eliminar un pedido per ID
-const deletePedido = async (id) => {
-  return await Pedido.findByIdAndDelete(id);
-};
-
-module.exports = {
-  createPedido,
-  getPedidos,
-  getPedidoById,
-  updatePedido,
-  deletePedido
-};
+exports.updatePedido = async (id, data) => await Pedido.findByIdAndUpdate(id, data, { new: true });
+exports.deletePedido = async (id) => await Pedido.findByIdAndDelete(id);
