@@ -1,6 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const pedidoService = require('../services/pedidoService');
+const pedidoController = require('../controllers/pedidoController');
+const authenticateToken = require('../middlewares/authMiddleware');
+
+router.use(authenticateToken); // Proteger todas las rutas de pedidos
+
+// POST crear pedido desde carrito (checkout)
+router.post('/checkout', pedidoController.checkout);
 
 // GET tots els pedidos
 router.get('/', async (req, res) => {

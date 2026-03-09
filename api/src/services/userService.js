@@ -3,78 +3,37 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
 
-const SECRET = process.env.JWT_SECRET || 'clave_secreta';
+const SECRET = process.env.JWT_SECRET || 'clave_super_secreta';
 
 class UserService {
-
-    // Registro
-    async registerUser(data) {
-        const { nombre, email, password } = data;
-
-        // Comprobar si el email ya existe
+    async registerUser({ nombre, email, password }) {
         const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            throw new Error('Usuari ja existeix');
-        }
+        if (existingUser) throw new Error('Usuario ya existe');
 
-        // Hashear contraseña
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-
-        // Crear usuario
-        const newUser = new User({
-            id_usuario: uuidv4(),
-            nombre,
-            email,
-            password: hashedPassword
-        });
-
+        const hashed = await bcrypt.hash(password, 10);
+        const newUser = new User({ id_usuario: uuidv4(), nombre, email, password: hashed });
         await newUser.save();
         return newUser;
     }
 
-    // Login
-    async loginUser(data) {
-        const { email, password } = data;
-
+    async loginUser({ email, password }) {
         const user = await User.findOne({ email });
         if (!user) throw new Error('Email o contraseña incorrecta');
 
-        const validPassword = await bcrypt.compare(password, user.password);
-        if (!validPassword) throw new Error('Email o contraseña incorrecta');
+        const valid = await bcrypt.compare(password, user.password);
+        if (!valid) throw new Error('Email o contraseña incorrecta');
 
-        const token = jwt.sign(
-            { id_usuario: user.id_usuario, email: user.email },
-            SECRET,
-            { expiresIn: '1h' }
-        );
-
+        const token = jwt.sign({ id_usuario: user.id_usuario, email: user.email }, SECRET, { expiresIn: '1h' });
         return { user, token };
     }
 
-    // Obtener todos los usuarios
-    async getAllUsers() {
-        return await User.find();
-    }
-
-    // Obtener usuario por id
-    async getUserById(id) {
-        return await User.findOne({ id_usuario: id });
-    }
-
-    // Actualizar usuario
+    async getAllUsers() { return await User.find(); }
+    async getUserById(id) { return await User.findOne({ id_usuario: id }); }
     async updateUser(id, data) {
-        if (data.password) {
-            const salt = await bcrypt.genSalt(10);
-            data.password = await bcrypt.hash(data.password, salt);
-        }
+        if (data.password) data.password = await bcrypt.hash(data.password, 10);
         return await User.findOneAndUpdate({ id_usuario: id }, data, { new: true });
     }
-
-    // Eliminar usuario
-    async deleteUser(id) {
-        return await User.findOneAndDelete({ id_usuario: id });
-    }
+    async deleteUser(id) { return await User.findOneAndDelete({ id_usuario: id }); }
 }
 
 module.exports = new UserService();

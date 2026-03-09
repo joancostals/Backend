@@ -1,55 +1,21 @@
 const express = require('express');
 const router = express.Router();
-const carritoService = require('../services/carritoService');
+const carritoController = require('../controllers/carritoController');
+const authenticateToken = require('../middlewares/authMiddleware');
 
-// GET tots els carritos
-router.get('/', async (req, res) => {
-    try {
-        const carritos = await carritoService.getAllCarritos();
-        res.json({ status: 'success', data: carritos });
-    } catch (err) {
-        res.status(500).json({ status: 'error', message: err.message });
-    }
-});
+// Aplicar el middleware de autenticación a todas las rutas de este router
+router.use(authenticateToken);
 
-// GET carrito per ID
-router.get('/:id', async (req, res) => {
-    try {
-        const carrito = await carritoService.getCarritoById(req.params.id);
-        res.json({ status: 'success', data: carrito });
-    } catch (err) {
-        res.status(500).json({ status: 'error', message: err.message });
-    }
-});
+// Obtener carrito
+router.get('/', carritoController.getCarrito);
 
-// POST crear carrito
-router.post('/', async (req, res) => {
-    try {
-        const carrito = await carritoService.createCarrito(req.body);
-        res.json({ status: 'success', data: carrito });
-    } catch (err) {
-        res.status(400).json({ status: 'error', message: err.message });
-    }
-});
+// Añadir producto
+router.post('/add/:id_pala', carritoController.addItem);
 
-// PUT actualitzar carrito per ID
-router.put('/:id', async (req, res) => {
-    try {
-        const carrito = await carritoService.updateCarrito(req.params.id, req.body);
-        res.json({ status: 'success', data: carrito });
-    } catch (err) {
-        res.status(400).json({ status: 'error', message: err.message });
-    }
-});
+// Eliminar producto
+router.delete('/remove/:id_pala', carritoController.removeItem);
 
-// DELETE carrito per ID
-router.delete('/:id', async (req, res) => {
-    try {
-        await carritoService.deleteCarrito(req.params.id);
-        res.json({ status: 'success', message: 'Carrito eliminat' });
-    } catch (err) {
-        res.status(400).json({ status: 'error', message: err.message });
-    }
-});
+// Vaciar carrito
+router.delete('/clear', carritoController.clearCarrito);
 
 module.exports = router;

@@ -12,6 +12,8 @@ const carritoRoutes = require('./routes/carritoRoute');
 
 
 const app = express();
+const cors = require('cors'); // Import CORS
+app.use(cors()); // Enable CORS
 app.use(express.json());
 
 // Connexió a la base de dades
