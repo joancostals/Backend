@@ -6,6 +6,7 @@ const pedidoRoutes = require('./routes/pedidoRoute');
 const palaRoutes = require('./routes/palaRoute');
 const resenaRoutes = require('./routes/resenaRoute');
 const carritoRoutes = require('./routes/carritoRoute');
+const authRoutes = require('./routes/authRoutes');
 
 
 
@@ -28,8 +29,7 @@ app.use('/api/pedidos', pedidoRoutes);
 app.use('/api/palas', palaRoutes);
 app.use('/api/resenas', resenaRoutes);
 app.use('/api/carritos', carritoRoutes);
-
-
+app.use('/api/auth', authRoutes);
 
 
 // Port

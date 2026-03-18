@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const palaService = require('../services/palaService');
+const authenticateToken = require('../middlewares/authMiddleware');
+const roleMiddleware = require('../middlewares/roleMiddleware');
 
 // GET totes les palas
 router.get('/', async (req, res) => {
@@ -23,7 +25,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST crear pala
-router.post('/', async (req, res) => {
+router.post('/', authenticateToken, roleMiddleware('admin'), async (req, res) => {
     try {
         const pala = await palaService.createPala(req.body);
         res.json({ status: 'success', data: pala });
@@ -33,7 +35,7 @@ router.post('/', async (req, res) => {
 });
 
 // PUT actualitzar pala per ID
-router.put('/:id', async (req, res) => {
+router.put('/:id', authenticateToken, roleMiddleware('admin'), async (req, res) => {
     try {
         const pala = await palaService.updatePala(req.params.id, req.body);
         res.json({ status: 'success', data: pala });
@@ -43,7 +45,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // DELETE pala per ID
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticateToken, roleMiddleware('admin'), async (req, res) => {
     try {
         await palaService.deletePala(req.params.id);
         res.json({ status: 'success', message: 'Pala eliminada' });
