@@ -76,25 +76,46 @@ exports.refresh = async (req, res) => {
 
         // Validar el token a la base de dades
         const user = await User.findOne({ refreshToken });
-        if (!user) return res.status(403).json({ message: 'Refresh Token invàlid' });
+        if (!user) return res.status(403).json({ message: 'Refresh Token invàlid (possiblement ja utilitzat o revocat)' });
 
         // Validar token amb jwt
-        jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, (err, decoded) => {
-            if (err) return res.status(403).json({ message: 'Refresh Token expirat o invàlid' });
+        jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, async (err, decoded) => {
+            if (err) {
+                // Si el token ha expirat, netejem el camp de la BD per seguretat
+                user.refreshToken = null;
+                await user.save();
+                return res.status(403).json({ message: 'Refresh Token expirat o invàlid' });
+            }
 
-            // Generar nou access token
+            // --- REFRESH TOKEN ROTATION ---
+            // Generar nou access token (curt: 15m)
             const newAccessToken = jwt.sign(
                 { id_usuario: user.id_usuario, email: user.email, role: user.role },
                 ACCESS_TOKEN_SECRET,
                 { expiresIn: '15m' }
             );
 
-            res.json({ accessToken: newAccessToken });
+            // Generar un NOU refresh token (llarg: 7d)
+            const newRefreshToken = jwt.sign(
+                { id_usuario: user.id_usuario },
+                REFRESH_TOKEN_SECRET,
+                { expiresIn: '7d' }
+            );
+
+            // Actualitzar el refresh token a la base de dades (el vell ja no servirà)
+            user.refreshToken = newRefreshToken;
+            await user.save();
+
+            res.json({ 
+                accessToken: newAccessToken, 
+                refreshToken: newRefreshToken 
+            });
         });
     } catch (error) {
         res.status(500).json({ message: 'Error en refresh token', error: error.message });
     }
 };
+
 
 exports.logout = async (req, res) => {
     try {

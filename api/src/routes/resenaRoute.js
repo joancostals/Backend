@@ -2,7 +2,34 @@ const express = require('express');
 const router = express.Router();
 const resenaService = require('../services/resenaService');
 
-// GET totes les resenas
+/**
+ * @swagger
+ * tags:
+ *   name: Reseñas
+ *   description: Gestió de ressenyes de productes
+ */
+
+/**
+ * @swagger
+ * /api/resenas:
+ *   get:
+ *     summary: Llista totes les ressenyes
+ *     tags: [Reseñas]
+ *     responses:
+ *       200:
+ *         description: Llista de ressenyes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Resena'
+ */
 router.get('/', async (req, res) => {
     try {
         const resenas = await resenaService.getAllResenas();
@@ -12,7 +39,31 @@ router.get('/', async (req, res) => {
     }
 });
 
-// GET resena per ID
+/**
+ * @swagger
+ * /api/resenas/{id}:
+ *   get:
+ *     summary: Obté una ressenya per ID
+ *     tags: [Reseñas]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Detalls de la ressenya
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 data:
+ *                   $ref: '#/components/schemas/Resena'
+ */
 router.get('/:id', async (req, res) => {
     try {
         const resena = await resenaService.getResenaById(req.params.id);
@@ -22,7 +73,24 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// POST crear resena
+/**
+ * @swagger
+ * /api/resenas:
+ *   post:
+ *     summary: Crea una nova ressenya
+ *     tags: [Reseñas]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Resena'
+ *     responses:
+ *       200:
+ *         description: Ressenya creada
+ */
 router.post('/', async (req, res) => {
     try {
         const resena = await resenaService.createResena(req.body);
@@ -32,7 +100,30 @@ router.post('/', async (req, res) => {
     }
 });
 
-// PUT actualitzar resena per ID
+/**
+ * @swagger
+ * /api/resenas/{id}:
+ *   put:
+ *     summary: Actualitza una ressenya
+ *     tags: [Reseñas]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Resena'
+ *     responses:
+ *       200:
+ *         description: Ressenya actualitzada
+ */
 router.put('/:id', async (req, res) => {
     try {
         const resena = await resenaService.updateResena(req.params.id, req.body);
@@ -42,7 +133,24 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// DELETE resena per ID
+/**
+ * @swagger
+ * /api/resenas/{id}:
+ *   delete:
+ *     summary: Elimina una ressenya
+ *     tags: [Reseñas]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Ressenya eliminada
+ */
 router.delete('/:id', async (req, res) => {
     try {
         await resenaService.deleteResena(req.params.id);
@@ -51,5 +159,6 @@ router.delete('/:id', async (req, res) => {
         res.status(400).json({ status: 'error', message: err.message });
     }
 });
+
 
 module.exports = router;
