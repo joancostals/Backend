@@ -15,12 +15,11 @@ const pedidoSchema = new mongoose.Schema({
         nombre: { type: String, required: true },
         apellidos: { type: String, required: true },
         correo: { type: String, required: true },
-        direccion: { type: String, required: true },
-        tarjeta: { type: String, required: true }
+        direccion: { type: String, required: true }
     },
     total: { type: Number, required: true },
     fecha: { type: Date, default: Date.now },
-    estado: { type: String, enum: ['pendiente','enviado','entregado','finalizado'], default: 'finalizado' }
+    estado: { type: String, enum: ['pending', 'paid', 'completado', 'pendiente', 'enviado', 'entregado', 'finalizado'], default: 'pending' }
 });
 
 module.exports = mongoose.model('Pedido', pedidoSchema);

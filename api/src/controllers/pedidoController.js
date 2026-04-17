@@ -13,7 +13,7 @@ exports.checkout = async (req, res) => {
         
         const { detallesEnvio } = req.body;
         
-        if (!detallesEnvio || !detallesEnvio.nombre || !detallesEnvio.direccion || !detallesEnvio.tarjeta) {
+        if (!detallesEnvio || !detallesEnvio.nombre || !detallesEnvio.direccion) {
             return res.status(400).json({ status: 'error', message: 'Faltan detalles de envío' });
         }
 
@@ -30,7 +30,7 @@ exports.checkout = async (req, res) => {
             })),
             detallesEnvio: detallesEnvio,
             total: total,
-            estado: 'finalizado' // Requerido por el usuario
+            estado: 'pending' 
         };
         
         const nuevoPedido = await pedidoService.createPedido(nuevoPedidoData);

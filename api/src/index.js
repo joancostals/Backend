@@ -17,6 +17,11 @@ const cors = require('cors'); // Import CORS
 const swaggerUi = require('swagger-ui-express'); 
 const swaggerSpec = require('./docs/swagger'); 
 app.use(cors()); // Enable CORS
+
+// Stripe Webhook necessita body raw format (Buffer)
+const checkoutController = require('./controllers/checkoutController');
+app.post('/api/checkout/webhook', express.raw({ type: 'application/json' }), checkoutController.webhook);
+
 app.use(express.json());
 
 // Connexió a la base de dades
@@ -32,6 +37,9 @@ app.use('/api/palas', palaRoutes);
 app.use('/api/resenas', resenaRoutes);
 app.use('/api/carritos', carritoRoutes);
 app.use('/api/auth', authRoutes);
+
+const checkoutRoutes = require('./routes/checkoutRoutes');
+app.use('/api/checkout', checkoutRoutes);
 
 // Swagger Documentation Route
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));

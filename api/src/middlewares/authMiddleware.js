@@ -15,7 +15,7 @@ const authenticateToken = (req, res, next) => {
         req.user = verified; // Añado la info del token al request (id_usuario, email)
         next();
     } catch (err) {
-        res.status(403).json({ message: 'Token no válido' });
+        res.status(401).json({ message: 'Token no válido o expirado' });
     }
 };
 
