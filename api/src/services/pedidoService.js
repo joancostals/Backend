@@ -2,6 +2,7 @@ const Pedido = require('../models/pedidoModel');
 
 exports.getAllPedidos = async () => await Pedido.find();
 exports.getPedidoById = async (id) => await Pedido.findById(id);
+exports.getPedidosUsuario = async (idUsuario) => await Pedido.find({ id_usuario: idUsuario });
 exports.createPedido = async (data) => {
     const pedido = new Pedido(data);
     return await pedido.save();

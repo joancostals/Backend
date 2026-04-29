@@ -3,6 +3,7 @@ const router = express.Router();
 const pedidoService = require('../services/pedidoService');
 const pedidoController = require('../controllers/pedidoController');
 const authenticateToken = require('../middlewares/authMiddleware');
+const roleMiddleware = require('../middlewares/roleMiddleware');
 
 router.use(authenticateToken); // Proteger todas las rutas de pedidos
 
@@ -29,6 +30,26 @@ router.post('/checkout', pedidoController.checkout);
 
 /**
  * @swagger
+ * /api/pedidos/usuario/{id}:
+ *   get:
+ *     summary: Obté els pedidos d'un usuari
+ *     tags: [Pedidos]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Llista de pedidos del usuari
+ */
+router.get('/usuario/:id', pedidoController.getPedidosUsuario);
+
+/**
+ * @swagger
  * /api/pedidos:
  *   get:
  *     summary: Llista tots els pedidos
@@ -50,7 +71,7 @@ router.post('/checkout', pedidoController.checkout);
  *                   items:
  *                     $ref: '#/components/schemas/Pedido'
  */
-router.get('/', async (req, res) => {
+router.get('/', roleMiddleware('admin'), async (req, res) => {
     try {
         const pedidos = await pedidoService.getAllPedidos();
         res.json({ status: 'success', data: pedidos });
@@ -113,7 +134,7 @@ router.get('/:id', async (req, res) => {
  *       200:
  *         description: Pedido creat
  */
-router.post('/', async (req, res) => {
+router.post('/', roleMiddleware('admin'), async (req, res) => {
     try {
         const pedido = await pedidoService.createPedido(req.body);
         res.json({ status: 'success', data: pedido });
@@ -146,7 +167,7 @@ router.post('/', async (req, res) => {
  *       200:
  *         description: Pedido actualitzat
  */
-router.put('/:id', async (req, res) => {
+router.put('/:id', roleMiddleware('admin'), async (req, res) => {
     try {
         const pedido = await pedidoService.updatePedido(req.params.id, req.body);
         res.json({ status: 'success', data: pedido });
@@ -173,7 +194,7 @@ router.put('/:id', async (req, res) => {
  *       200:
  *         description: Pedido eliminat
  */
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', roleMiddleware('admin'), async (req, res) => {
     try {
         await pedidoService.deletePedido(req.params.id);
         res.json({ status: 'success', message: 'Pedido eliminat' });

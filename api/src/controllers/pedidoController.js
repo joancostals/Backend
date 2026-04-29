@@ -51,6 +51,15 @@ exports.getAllPedidos = async (req, res) => {
     }
 };
 
+exports.getPedidosUsuario = async (req, res) => {
+    try {
+        const pedidos = await pedidoService.getPedidosUsuario(req.params.id);
+        res.json({ status: 'success', data: pedidos });
+    } catch (error) {
+        res.status(500).json({ status: 'error', message: error.message });
+    }
+};
+
 exports.getPedidoById = async (req, res) => {
     try {
         const pedido = await pedidoService.getPedidoById(req.params.id);

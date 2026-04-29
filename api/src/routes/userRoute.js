@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
+const authenticateToken = require('../middlewares/authMiddleware');
+const roleMiddleware = require('../middlewares/roleMiddleware');
 
 // Registro y login
 router.post('/register', userController.register);
@@ -26,7 +28,7 @@ router.post('/login', userController.login);
  *       200:
  *         description: Llista d'usuaris
  */
-router.get('/', userController.getAllUsers);
+router.get('/', authenticateToken, roleMiddleware('admin'), userController.getAllUsers);
 
 /**
  * @swagger
