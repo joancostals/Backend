@@ -39,11 +39,17 @@ exports.login = async (req, res) => {
 
         // Buscar usuari per email
         const user = await User.findOne({ email });
-        if (!user) return res.status(401).json({ message: 'Credencials invàlides' });
+        if (!user) {
+            if (req.log) req.log.warn({ email }, 'Invalid login attempt');
+            return res.status(401).json({ message: 'Credencials invàlides' });
+        }
 
         // Comparar contrasenya amb bcrypt
         const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) return res.status(401).json({ message: 'Credencials invàlides' });
+        if (!isMatch) {
+            if (req.log) req.log.warn({ email }, 'Invalid login attempt');
+            return res.status(401).json({ message: 'Credencials invàlides' });
+        }
 
         // Generar access token (curt: 15m)
         const accessToken = jwt.sign(
@@ -62,6 +68,13 @@ exports.login = async (req, res) => {
         // Guardar refresh token a la base de dades
         user.refreshToken = refreshToken;
         await user.save();
+
+        if (req.log) {
+            req.log.info({ 
+                userId: user.id_usuario, 
+                email: user.email 
+            }, 'User logged in successfully');
+        }
 
         res.json({ accessToken, refreshToken, user: { id_usuario: user.id_usuario, nombre: user.nombre, email: user.email, role: user.role } });
     } catch (error) {
@@ -127,6 +140,9 @@ exports.logout = async (req, res) => {
         if (user) {
             user.refreshToken = null;
             await user.save();
+            if (req.log) {
+                req.log.info({ userId: user.id_usuario }, 'User logged out');
+            }
         }
 
         res.json({ message: 'Logout correcte' });

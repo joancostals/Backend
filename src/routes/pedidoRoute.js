@@ -204,4 +204,6 @@ router.delete('/:id', roleMiddleware('admin'), async (req, res) => {
 });
 
 
+router.post('/verify-payment/:orderId', pedidoController.verifyPayment);
+
 module.exports = router;

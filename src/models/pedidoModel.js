@@ -19,7 +19,7 @@ const pedidoSchema = new mongoose.Schema({
     },
     total: { type: Number, required: true },
     fecha: { type: Date, default: Date.now },
-    estado: { type: String, enum: ['pending', 'paid', 'completado', 'pendiente', 'enviado', 'entregado', 'finalizado'], default: 'pending' }
+    estado: { type: String, enum: ['pending', 'paid', 'completado', 'pendiente', 'enviado', 'entregado', 'finalizado', 'finalizada'], default: 'pending' }
 });
 
 module.exports = mongoose.model('Pedido', pedidoSchema);

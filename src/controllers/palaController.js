@@ -2,9 +2,11 @@ const palaService = require('../services/palaService');
 
 exports.getAllPalas = async (req, res) => {
     try {
+        if (req.log) req.log.info({ requestId: req.requestId }, 'Getting product list');
         const palas = await palaService.getAllPalas();
         res.json(palas);
     } catch (err) {
+        if (req.log) req.log.error({ requestId: req.requestId, error: err.message }, 'Error getting products');
         res.status(500).json({ message: err.message });
     }
 };

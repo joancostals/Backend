@@ -7,11 +7,11 @@ const palaRoutes = require('./routes/palaRoute');
 const resenaRoutes = require('./routes/resenaRoute');
 const carritoRoutes = require('./routes/carritoRoute');
 const authRoutes = require('./routes/authRoutes');
+const healthRoutes = require('./routes/healthRoutes');
 
-
-
-
-
+const requestId = require('./middlewares/requestId');
+const httpLogger = require('./middlewares/httpLogger');
+const errorHandler = require('./middlewares/errorHandler');
 const app = express();
 const cors = require('cors'); // Import CORS
 const swaggerUi = require('swagger-ui-express'); 
@@ -23,6 +23,10 @@ const checkoutController = require('./controllers/checkoutController');
 app.post('/api/checkout/webhook', express.raw({ type: 'application/json' }), checkoutController.webhook);
 
 app.use(express.json());
+
+// Observability Middlewares
+app.use(requestId);
+app.use(httpLogger);
 
 // Connexió a la base de dades
 connectDB();
@@ -41,11 +45,20 @@ app.use('/api/auth', authRoutes);
 const checkoutRoutes = require('./routes/checkoutRoutes');
 app.use('/api/checkout', checkoutRoutes);
 
+// Health check & Metrics
+app.use('/api', healthRoutes);
+
+// Debug endpoint per error handler
+app.get('/api/debug/error', (req, res, next) => { 
+  next(new Error('Error de prova per observabilitat')); 
+});
+
 // Swagger Documentation Route
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
+// Global Error Handler
+app.use(errorHandler);
 
 // Port
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, '0.0.0.0', () => console.log(`Servidor en marxa al port ${PORT}`));
-

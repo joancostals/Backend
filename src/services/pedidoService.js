@@ -8,4 +8,5 @@ exports.createPedido = async (data) => {
     return await pedido.save();
 };
 exports.updatePedido = async (id, data) => await Pedido.findByIdAndUpdate(id, data, { new: true });
+exports.updatePedidoByCustomId = async (idPedido, data) => await Pedido.findOneAndUpdate({ id_pedido: idPedido }, data, { new: true });
 exports.deletePedido = async (id) => await Pedido.findByIdAndDelete(id);
